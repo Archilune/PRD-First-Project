@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Okupansi Kantin</title>
+    <style>
+        .terisi { background-color: red; color: white; font-weight: bold; }
+        .kosong { background-color: green; color: white; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Monitoring Tempat Duduk - GKU 1</h1>
+
+    <h2>Total Kursi Terisi: {{ data.occupied_count }} / {{ data.max_capacity }}</h2>
+
+    <p>Status Meja saat ini:</p>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>No. Meja</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+        <tr>
+            <td>K1-04</td>
+            <td style="color: green;">KOSONG</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>K1-05</td>
+            <td class="{{ 'terisi' if data.meja['K1-05'] == 'TERISI' else 'kosong' }}">
+                {{ data.meja['K1-05'] }}
+            </td>
+            <td>
+                {% if data.meja['K1-05'] == 'TERISI' %}
+                <button onclick="alert('Geofencing Aktif: Menunggu 5 menit setelah meninggalkan area...')">Selesai</button>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>K1-06</td>
+            <td style="color: green;">KOSONG</td>
+            <td>-</td>
+        </tr>
+    </table>
+
+    <hr>
+    <p><i>Catatan: Meja akan otomatis hijau jika Geofencing mendeteksi HP berada di luar radius > 5 menit.</i></p>
+    
+    <a href="/">Kembali ke Simulasi Scan QR</a>
+</body>
+</html>

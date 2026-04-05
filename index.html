@@ -3,463 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kantin GKU 1 — Prototype</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --bg: #F5F3EE;
-            --surface: #FFFFFF;
-            --border: #D9D5CC;
-            --border-dark: #B0AB9E;
-            --text-primary: #1A1814;
-            --text-secondary: #6B6560;
-            --text-muted: #9B958D;
-            --accent: #1A1814;
-            --green: #1D6A3A;
-            --green-bg: #E8F5EE;
-            --red: #8B1A1A;
-            --red-bg: #F5E8E8;
-            --blue: #1A3A6A;
-            --blue-bg: #E8EEFF;
-            --mono: 'IBM Plex Mono', monospace;
-            --sans: 'IBM Plex Sans', sans-serif;
-        }
-
-        body {
-            font-family: var(--sans);
-            background: var(--bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 0;
-        }
-
-        /* ── Layout ── */
-        .shell {
-            max-width: 480px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ── Top bar ── */
-        .topbar {
-            padding: 16px 24px 12px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            background: var(--surface);
-            z-index: 10;
-        }
-        .topbar-brand {
-            font-family: var(--mono);
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            color: var(--text-primary);
-        }
-        .topbar-brand span {
-            color: var(--text-muted);
-        }
-
-        /* ── Stepper ── */
-        .stepper {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 14px 24px;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg);
-        }
-        .step {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            padding: 3px 8px;
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            white-space: nowrap;
-            background: var(--surface);
-        }
-        .step.active {
-            color: var(--text-primary);
-            border-color: var(--text-primary);
-            font-weight: 500;
-        }
-        .step.done {
-            color: var(--green);
-            border-color: var(--green);
-        }
-        .step-sep {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--border-dark);
-        }
-
-        /* ── Page ── */
-        .page { display: none; flex: 1; }
-        .page.active { display: flex; flex-direction: column; }
-
-        .page-content {
-            padding: 28px 24px;
-            flex: 1;
-        }
-
-        .page-title {
-            font-weight: 500;
-            font-size: 20px;
-            letter-spacing: -0.02em;
-            margin-bottom: 4px;
-        }
-        .page-sub {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-
-        /* ── Info strip ── */
-        .info-strip {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 12px 14px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .info-strip-label {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-        .info-strip-value {
-            font-family: var(--mono);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        /* ── Form fields ── */
-        .field-group { margin-bottom: 20px; }
-        .field-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        select {
-            width: 100%;
-            padding: 10px 12px;
-            font-family: var(--sans);
-            font-size: 14px;
-            color: var(--text-primary);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%239B958D' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            cursor: pointer;
-            transition: border-color 0.15s;
-        }
-        select:focus { outline: none; border-color: var(--text-primary); }
-
-        /* ── Section divider ── */
-        .section-divider {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 24px 0 20px;
-        }
-        .section-divider-line { flex: 1; height: 1px; background: var(--border); }
-        .section-divider-label {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.06em;
-        }
-
-        /* ── Buttons ── */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 11px 18px;
-            font-family: var(--sans);
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.12s;
-            border: 1px solid transparent;
-            text-decoration: none;
-        }
-        .btn-primary {
-            background: var(--text-primary);
-            color: #FFFFFF;
-            width: 100%;
-            justify-content: center;
-        }
-        .btn-primary:hover { background: #333; }
-        .btn-primary:active { transform: scale(0.99); }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--text-primary);
-            border-color: var(--border);
-            width: 100%;
-            justify-content: center;
-        }
-        .btn-outline:hover { border-color: var(--text-primary); background: var(--bg); }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: none;
-            padding: 8px 0;
-            font-size: 13px;
-        }
-        .btn-ghost:hover { color: var(--text-primary); }
-
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-
-        /* ── QRIS block ── */
-        .qris-block {
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 20px;
-            animation: slideDown 0.2s ease;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .qris-header {
-            background: var(--bg);
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-        .qris-body { padding: 20px; text-align: center; }
-        .qris-img {
-            width: 160px;
-            height: 160px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .qris-img svg { opacity: 0.25; }
-        .qris-note {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            line-height: 1.5;
-        }
-
-        /* ── Dashboard ── */
-        .stat-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-        .stat-box {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 14px 16px;
-        }
-        .stat-box-label {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .stat-box-value {
-            font-family: var(--mono);
-            font-size: 26px;
-            font-weight: 500;
-            color: var(--text-primary);
-            line-height: 1;
-        }
-        .stat-box-value small {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        /* ── Table ── */
-        .meja-table {
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            border-collapse: separate;
-            border-spacing: 0;
-            overflow: hidden;
-            font-size: 13px;
-        }
-        .meja-table th {
-            background: var(--bg);
-            padding: 9px 12px;
-            text-align: left;
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-            font-weight: 500;
-        }
-        .meja-table td {
-            padding: 12px 12px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-primary);
-            vertical-align: middle;
-        }
-        .meja-table tr:last-child td { border-bottom: none; }
-        .meja-table tr.row-terisi { background: #FFFAF8; }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 500;
-            padding: 3px 8px;
-            border-radius: 2px;
-            letter-spacing: 0.04em;
-        }
-        .badge::before {
-            content: '';
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-        }
-        .badge-terisi { background: var(--red-bg); color: var(--red); }
-        .badge-terisi::before { background: var(--red); }
-        .badge-kosong { background: var(--green-bg); color: var(--green); }
-        .badge-kosong::before { background: var(--green); }
-
-        .btn-selesai {
-            font-family: var(--mono);
-            font-size: 11px;
-            padding: 5px 10px;
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.12s;
-        }
-        .btn-selesai:hover { border-color: var(--text-primary); color: var(--text-primary); }
-
-        /* ── Toast ── */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--text-primary);
-            color: #FFF;
-            font-size: 13px;
-            padding: 11px 18px;
-            border-radius: 4px;
-            white-space: nowrap;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 100;
-            max-width: 90vw;
-            white-space: normal;
-            text-align: center;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-
-        /* ── Note footer ── */
-        .note-footer {
-            padding: 14px 24px;
-            border-top: 1px solid var(--border);
-            background: var(--bg);
-        }
-        .note-footer p {
-            font-size: 11px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            font-family: var(--mono);
-        }
-
-        /* ── Scan page ── */
-        .meja-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-        .meja-card {
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 16px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.12s;
-            background: var(--surface);
-        }
-        .meja-card:hover { border-color: var(--text-primary); background: var(--bg); }
-        .meja-card.selected { border-color: var(--text-primary); border-width: 2px; background: var(--bg); }
-        .meja-card-id {
-            font-family: var(--mono);
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-        .meja-card-status {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-        .meja-card.occupied { background: #FFF8F8; border-color: #E8C8C8; }
-        .meja-card.occupied .meja-card-status { color: var(--red); }
-    </style>
+    <title>Six ITB</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="shell">
-
-    <!-- Top Bar -->
     <div class="topbar">
-        <div class="topbar-brand">KANTIN<span>/</span>GKU1</div>
+        <div class="topbar-brand">Sistem Informasi Akademik<span>/</span>Kantin</div>
         <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);">PROTOTYPE v0.1</div>
     </div>
 
-    <!-- Stepper -->
     <div class="stepper" id="stepper">
         <span class="step active" id="step-1">01 Scan</span>
         <span class="step-sep">—</span>
@@ -468,11 +22,10 @@
         <span class="step" id="step-3">03 Dashboard</span>
     </div>
 
-    <!-- ══════════════ PAGE 1: SCAN ══════════════ -->
     <div class="page active" id="pg-scan">
         <div class="page-content">
             <div class="page-title">Simulasi Scan QR</div>
-            <div class="page-sub">Pilih meja yang akan disimulasikan di-scan oleh pengguna. Pada sistem nyata, ini terjadi otomatis.</div>
+            <div class="page-sub">Pilih meja yang akan disimulasikan di-scan oleh pengguna.</div>
 
             <label class="field-label">Pilih meja</label>
             <div class="meja-grid" id="meja-grid"></div>
@@ -495,7 +48,6 @@
         </div>
     </div>
 
-    <!-- ══════════════ PAGE 2: KONFIRMASI ══════════════ -->
     <div class="page" id="pg-konfirmasi">
         <div class="page-content">
             <div class="page-title">Konfirmasi Pembayaran</div>
@@ -528,29 +80,13 @@
                 <button class="btn btn-outline" onclick="payDirect()">Bayar Langsung (Kasir)</button>
             </div>
 
-            <!-- QRIS Block -->
             <div class="qris-block" id="qris-container" style="display:none;">
                 <div class="qris-header">QRIS — Scan untuk bayar</div>
                 <div class="qris-body">
                     <div class="qris-img">
-                        <!-- QR icon placeholder -->
-                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="24" height="24" rx="2" stroke="#1A1814" stroke-width="3"/>
-                            <rect x="10" y="10" width="12" height="12" rx="1" fill="#1A1814"/>
-                            <rect x="36" y="4" width="24" height="24" rx="2" stroke="#1A1814" stroke-width="3"/>
-                            <rect x="42" y="10" width="12" height="12" rx="1" fill="#1A1814"/>
-                            <rect x="4" y="36" width="24" height="24" rx="2" stroke="#1A1814" stroke-width="3"/>
-                            <rect x="10" y="42" width="12" height="12" rx="1" fill="#1A1814"/>
-                            <rect x="36" y="36" width="5" height="5" fill="#1A1814"/>
-                            <rect x="43" y="36" width="5" height="5" fill="#1A1814"/>
-                            <rect x="50" y="36" width="5" height="5" fill="#1A1814"/>
-                            <rect x="36" y="43" width="5" height="5" fill="#1A1814"/>
-                            <rect x="50" y="43" width="5" height="5" fill="#1A1814"/>
-                            <rect x="36" y="50" width="5" height="5" fill="#1A1814"/>
-                            <rect x="43" y="50" width="12" height="5" fill="#1A1814"/>
-                        </svg>
+                        <img src="qris.png" alt="QRIS Code" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
-                    <div class="qris-note">Scan kode QR menggunakan aplikasi dompet digital. Ganti <code>qris.png</code> dengan file asli.</div>
+                    <div class="qris-note">Scan kode QR menggunakan aplikasi dompet digital.</div>
                     <button class="btn btn-primary" onclick="toDashboard('QRIS')">Saya Sudah Bayar ✓</button>
                 </div>
             </div>
@@ -561,7 +97,6 @@
         </div>
     </div>
 
-    <!-- ══════════════ PAGE 3: DASHBOARD ══════════════ -->
     <div class="page" id="pg-dashboard">
         <div class="page-content">
             <div class="page-title">Monitoring Tempat Duduk</div>
@@ -592,165 +127,16 @@
         </div>
 
         <div class="note-footer">
-            <p>* Tombol "Selesai" mensimulasikan geofencing: meja otomatis kosong jika HP terdeteksi &gt;5 menit di luar area.</p>
+            <p>* Tombol "Selesai" mensimulasikan geofencing.</p>
             <br>
             <button class="btn btn-ghost" style="font-size:12px;padding:0;" onclick="goTo('pg-scan', 0)">← Simulasi ulang</button>
         </div>
     </div>
-
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<script>
-    /* ── State (simulasi "database" backend) ── */
-    const state = {
-        meja: {
-            'K1-04': { status: 'KOSONG', kantin: '-' },
-            'K1-05': { status: 'KOSONG', kantin: '-' },
-            'K1-06': { status: 'KOSONG', kantin: '-' }
-        },
-        selectedMeja: null,
-        maxCapacity: 3
-    };
-
-    /* ── Router ── */
-    function goTo(pageId, stepIdx) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        updateStepper(stepIdx);
-        window.scrollTo(0, 0);
-    }
-
-    function updateStepper(activeIdx) {
-        ['step-1','step-2','step-3'].forEach((id, i) => {
-            const el = document.getElementById(id);
-            el.className = 'step';
-            if (i < activeIdx) el.classList.add('done');
-            else if (i === activeIdx) el.classList.add('active');
-        });
-    }
-
-    /* ── Page 1: Scan ── */
-    function renderMejaGrid() {
-        const grid = document.getElementById('meja-grid');
-        grid.innerHTML = '';
-        Object.keys(state.meja).forEach(id => {
-            const m = state.meja[id];
-            const card = document.createElement('div');
-            card.className = 'meja-card' + (m.status === 'TERISI' ? ' occupied' : '');
-            card.id = 'card-' + id;
-            card.innerHTML = `
-                <div class="meja-card-id">${id}</div>
-                <div class="meja-card-status">${m.status === 'TERISI' ? '● TERISI' : '○ Kosong'}</div>
-            `;
-            if (m.status === 'KOSONG') {
-                card.onclick = () => selectMeja(id);
-            }
-            grid.appendChild(card);
-        });
-        if (state.selectedMeja) selectMeja(state.selectedMeja, false);
-    }
-
-    function selectMeja(id, update = true) {
-        document.querySelectorAll('.meja-card').forEach(c => c.classList.remove('selected'));
-        const card = document.getElementById('card-' + id);
-        if (card) card.classList.add('selected');
-        state.selectedMeja = id;
-        document.getElementById('scan-info').style.display = 'flex';
-        document.getElementById('scan-meja-label').textContent = id + ' (GKU 1)';
-        document.getElementById('btn-scan').disabled = false;
-    }
-
-    function doScan() {
-        if (!state.selectedMeja) return;
-        document.getElementById('label-meja').textContent = state.selectedMeja + ' (GKU 1)';
-        document.getElementById('qris-container').style.display = 'none';
-        goTo('pg-konfirmasi', 1);
-    }
-
-    /* ── Page 2: Konfirmasi ── */
-    function showQRIS() {
-        const qris = document.getElementById('qris-container');
-        qris.style.display = 'block';
-    }
-
-    function payDirect() {
-        const kantin = document.getElementById('kantin').value;
-        showToast('Silakan menuju kasir ' + kantin + ' untuk pembayaran tunai.');
-        setTimeout(() => toDashboard('Kasir Tunai'), 1200);
-    }
-
-    function toDashboard(method) {
-        const kantin = document.getElementById('kantin').value;
-        const meja = state.selectedMeja;
-
-        /* ── Simulasi POST /konfirmasi_bayar ── */
-        state.meja[meja].status = 'TERISI';
-        state.meja[meja].kantin = kantin;
-
-        renderDashboard();
-        goTo('pg-dashboard', 2);
-        showToast('Pembayaran via ' + method + ' berhasil. Meja ' + meja + ' kini TERISI.');
-    }
-
-    /* ── Page 3: Dashboard ── */
-    function renderDashboard() {
-        const total = Object.keys(state.meja).length;
-        const terisi = Object.values(state.meja).filter(m => m.status === 'TERISI').length;
-        document.getElementById('stat-terisi').innerHTML = terisi + ' <small>/ ' + total + '</small>';
-        document.getElementById('stat-kosong').innerHTML = (total - terisi) + ' <small>/ ' + total + '</small>';
-
-        const tbody = document.getElementById('tabel-meja');
-        tbody.innerHTML = '';
-        Object.keys(state.meja).forEach(id => {
-            const m = state.meja[id];
-            const isTerisi = m.status === 'TERISI';
-            const tr = document.createElement('tr');
-            if (isTerisi) tr.className = 'row-terisi';
-            tr.innerHTML = `
-                <td style="font-family:var(--mono);font-weight:500;">${id}</td>
-                <td style="color:var(--text-secondary);font-size:12px;">${m.kantin}</td>
-                <td>
-                    <span class="badge ${isTerisi ? 'badge-terisi' : 'badge-kosong'}">
-                        ${m.status}
-                    </span>
-                </td>
-                <td>
-                    ${isTerisi
-                        ? `<button class="btn-selesai" onclick="selesaiMeja('${id}')">Selesai</button>`
-                        : '<span style="color:var(--text-muted);font-size:12px;">—</span>'
-                    }
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function selesaiMeja(id) {
-        /* ── Simulasi geofencing / pembayaran selesai ── */
-        state.meja[id].status = 'KOSONG';
-        state.meja[id].kantin = '-';
-        renderDashboard();
-        renderMejaGrid();
-        showToast('Meja ' + id + ' kini kosong (geofencing aktif).');
-    }
-
-    /* ── Toast ── */
-    let toastTimer;
-    function showToast(msg) {
-        const el = document.getElementById('toast');
-        el.textContent = msg;
-        el.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-    }
-
-    /* ── Init ── */
-    renderMejaGrid();
-    renderDashboard();
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>

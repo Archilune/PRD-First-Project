@@ -1,1 +1,1 @@
-Actually ini untuk project ke depannya mungkenn, karena harus python flask manual di sini, enaknya ke branch/protoype
+tolong claude pro-nya dulu woi

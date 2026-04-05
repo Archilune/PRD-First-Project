@@ -27,7 +27,7 @@
 
     <div id="qris-container" style="display:none; margin-top: 20px;">
         <p>Silakan Scan QRIS berikut:</p>
-        <img src="qris.png" alt="QRIS Payment" width="200">
+        <img src="{{ url_for('static', filename='qris.png') }}" alt="QRIS Payment" width="200">
         <br><br>
         <button onclick="toDashboard()">Saya Sudah Bayar</button>
     </div>

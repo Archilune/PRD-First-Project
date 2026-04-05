@@ -29,5 +29,5 @@ def konfirmasi_bayar():
     return jsonify(success=True)
 
 if __name__ == '__main__':
-    # Tambahin port=3000 biar sesuai sama screenshot error kamu tadi
-    app.run(debug=True, port=3000)
+    
+    app.run(debug=True, port=5005)
